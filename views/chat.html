@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo socket</title>
+    </head>
+    <script src = "/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io('/my-namespace');
+        socket.on('hi',function(data) {
+            document.body.innerHTML = '';
+            document.write(data);
+        });
+    </script>
+
+<!--    <script>-->
+<!--        let socket = io();-->
+<!--        socket.on("hello", function (message) {-->
+<!--            document.write(message)-->
+<!--        })-->
+
+<!--        socket.on('connect_failed', function() {-->
+<!--            document.write("Sorry, there seems to be an issue with the connection!");-->
+<!--        })-->
+
+<!--        socket.emit("clientMessage", "Day la thong bao gui tu client")-->
+<!--    </script>-->
+    <body></body>
+</html>
