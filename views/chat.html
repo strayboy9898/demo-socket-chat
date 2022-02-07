@@ -1,94 +1,136 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Hello world</title>
-    <link rel="stylesheet" href="./chat.css" type="text/css">
-</head>
+    <head>
+        <title>Chat web</title>
+        <link rel="stylesheet" href="./chat.css" type="text/css">
+    </head>
 
 
-<script src = "/socket.io/socket.io.js"></script>
-<script>
-    let socket = io();
-    let user;
+    <script src = "/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io();
+        let user;
+        let group;
 
-    function setUsername() {
-        socket.emit('setUsername', document.getElementById('name').value);
-    };
+        function setUsername() {
+            socket.emit('setUsername', document.getElementById('name').value);
+        };
 
-    function sendMessage() {
-        let msg = document.getElementById('message').value;
-        if(msg) {
-            socket.emit('msg', {message: msg, user: user});
+        function sendMessage() {
+            let msg = document.getElementById('message').value;
+            if(msg) {
+                socket.emit('msg', {message: msg, user: user});
+            }
         }
-    }
 
-    function goChatAll() {
-        document.body.innerHTML = `<h1> Name: ${user} </h1>\
-        <input type = "text" id = "message">\
-         <button type = "button" name = "button" onclick = "sendMessage()">Send</button>\
-         <div id = "message-container"></div>`;
-    }
-
-    function createGroup() {
-        socket.emit('createGroup', {groupName: document.getElementById('createGroup').value});
-    }
-
-    function joinGroup() {
-
-    }
-
-    function chatIndividual() {
-
-    }
-
-    socket.on('userExists', function(data) {
-        document.getElementById('error-container').innerHTML = data;
-    });
-    socket.on('groupNameExists', function (data) {
-        document.getElementById('error-option-container').innerHTML = data;
-    });
-    socket.on('userSet', function(data) {
-        user = data.username;
-        document.body.innerHTML = `
-        <div id = "error-option-container"></div>
-        <h1> Name: ${user} </h1>
-        <div id="button-container">
-            <table>
-                <tr>
-                    <th><button type = "button" name = "buttonChatAll" class="buttonGo" onclick = "goChatAll()">Chat all</button> </th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th><button type = "button" name = "buttonChatInvidual" class="buttonGo" onclick = "chatIndividual ()">Chat invidual</button></th>
-                    <th><input id="userName" type="text" value="" placeholder="userName"> </th>
-                </tr>
-                <tr>
-                    <th><button type = "button" name = "buttonCreateGroup" class="buttonGo" onclick = "createGroup()">Create group</button></th>
-                    <th><input id="createGroup" type="text" value="" placeholder="groupName"> </th>
-                </tr>
-                <tr>
-                    <th><button type = "button" name = "buttonJoinGroup" class="buttonGo" onclick = "joinGroup()" >Join group</button></th>
-                    <th><input id="findGroupName" type="text" value="" placeholder="groupName"></th>
-                </tr>
-            </table>
-        </div>`
-
-    });
-
-    socket.on('newmsg', function(data) {
-        if(user) {
-            document.getElementById('message-container').innerHTML += '<div><b>' +
-                data.user + '</b>: ' + data.message + '</div>'
+        function sendMessageInGroup() {
+            let msg = document.getElementById('messageGroup').value;
+            if(msg) {
+                socket.emit('msgGroup', {message: msg, user: user, groupName: group});
+            }
         }
-    })
-</script>
 
-<body>
-    <div id = "error-container"></div>
-    <input id = "name" type = "text" name = "name" value = ""
-           placeholder = "Enter your name!">
-    <button type = "button" name = "button" onclick = "setUsername()">
-        Let me chat!
-    </button>
-</body>
+        function goChatAll() {
+            document.body.innerHTML = `<h1> Name: ${user} </h1>\
+            <input type = "text" id = "message">\
+             <button type = "button" name = "button" onclick = "sendMessage()">Send</button>\
+             <div id = "message-container"></div>`;
+        }
+
+        function createGroup() {
+           // let groupName = document.getElementById('createGroup').value};
+            socket.emit('createGroup', {groupName: document.getElementById('createGroup').value});
+            document.body.innerHTML = `<h1> Group Name: ${document.getElementById('createGroup').value} </h1>\
+             <input type = "text" id = "messageGroup">\
+             <button type = "button" name = "button" onclick = "sendMessageInGroup()">Send</button>\
+             <div id = "message-container"></div>`;
+        }
+
+        function joinGroup() {
+            socket.emit('joinGroup', {groupName: document.getElementById('findGroupName').value});
+            document.body.innerHTML = `<h1> Group Name: ${document.getElementById('findGroupName').value} </h1>\
+             <input type = "text" id = "messageGroup">\
+             <button type = "button" name = "button" onclick = "sendMessageInGroup()">Send</button>\
+             <div id = "message-container"></div>`;
+        }
+
+        function chatIndividual() {
+
+        }
+
+        socket.on('userExists', function(data) {
+            document.getElementById('error-container').innerHTML = data;
+        });
+
+        socket.on('groupNameExists', function (data) {
+            document.getElementById('error-option-container').innerHTML = data;
+        });
+
+        //option screen
+        socket.on('userSet', function(data) {
+            user = data.username;
+            document.body.innerHTML = `
+            <div id = "error-option-container"></div>
+            <h1> Name: ${user} </h1>
+            <div id="button-container">
+                <table>
+                    <tr>
+                        <th><button type = "button" name = "buttonChatAll" class="buttonGo" onclick = "goChatAll()">Chat all</button> </th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <th><button type = "button" name = "buttonChatInvidual" class="buttonGo" onclick = "chatIndividual ()">Chat invidual</button></th>
+                        <th><input id="userName" type="text" value="" placeholder="userName"> </th>
+                    </tr>
+                    <tr>
+                        <th><button type = "button" name = "buttonCreateGroup" class="buttonGo" onclick = "createGroup()">Create group</button></th>
+                        <th><input id="createGroup" type="text" value="" placeholder="groupName"> </th>
+                    </tr>
+                    <tr>
+                        <th><button type = "button" name = "buttonJoinGroup" class="buttonGo" onclick = "joinGroup()" >Join group</button></th>
+                        <th><input id="findGroupName" type="text" value="" placeholder="groupName"></th>
+                    </tr>
+                </table>
+            </div>`
+
+        });
+
+        //nghe event chat all
+        socket.on('newmsg', function(data) {
+            if(user) {
+                document.getElementById('message-container').innerHTML += '<div><b>' +
+                    data.user + '</b>: ' + data.message + '</div>'
+            }
+        })
+
+        //nghe event chat group
+        socket.on('newmsgGroup', function(data) {
+            if(user && group) {
+                document.getElementById('message-container').innerHTML += '<div><b>' +
+                    data.user + '</b>: ' + data.message + '</div>'
+            }
+        })
+
+        //nghe su kien tao phong
+        socket.on('notificationCreateRoom', function(data) {
+            group = data.groupName;
+            alert(data.msg);
+        })
+
+        //nghe su kien vao phong
+        socket.on('notificationJoinRoom', function(data) {
+            group = data.groupName;
+            alert(data.msg);
+
+        })
+    </script>
+
+    <body>
+        <div id = "error-container"></div>
+        <input id = "name" type = "text" name = "name" value = ""
+               placeholder = "Enter your name!">
+        <button type = "button" name = "button" onclick = "setUsername()">
+            Let me chat!
+        </button>
+    </body>
 </html>

@@ -31,13 +31,33 @@ io.on('connection', function(socket) {
         io.sockets.emit('newmsg', data);
     })
 
+    socket.on('msgGroup', function(data) {
+        //Send message to group chat
+        console.log('chat in group');
+        io.in(data.groupName).emit('newmsgGroup', data);
+    })
+
     socket.on('createGroup', function (data) {
         console.log('group name: ', data.groupName);
         if(groups.indexOf(data.groupName) == -1) {
             groups.push(data.groupName);
+            socket.join(data.groupName);
+            socket.emit("notificationCreateRoom", {msg: "Bạn đã tạo một phòng", groupName: data.groupName});
             // socket.emit('userSet', {username: data}); todo: create emit handler group name
         } else {
             socket.emit('groupNameExists', data.groupName + ' group name is taken! Try some other group name.');
+        }
+    })
+
+    socket.on('joinGroup', function (data) {
+        console.log('group name join: ', data.groupName);
+        console.log('joinnnnnnnnnnnnnnnnnnnnn')
+        if(groups.indexOf(data.groupName) != -1) {
+            socket.join(data.groupName);
+            socket.to(data.groupName).emit("notificationJoinRoom", {msg: "Có người đã vào phòng", groupName: data.groupName});
+            // socket.emit('userSet', {username: data}); todo: create emit handler group name
+        } else {
+            socket.emit('groupNameNoExists', data.groupName + ' no exist! Try some other group name.');
         }
     })
 });
