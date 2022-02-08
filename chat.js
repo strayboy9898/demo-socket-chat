@@ -16,6 +16,7 @@ users = [];
 groups = [];
 io.on('connection', function(socket) {
     console.log('A user connected');
+    console.log('id: ', socket.id);
     socket.on('setUsername', function(data) {
         console.log(users);
         if(users.indexOf(data) == -1) {
@@ -51,12 +52,12 @@ io.on('connection', function(socket) {
 
     socket.on('joinGroup', function (data) {
         console.log('group name join: ', data.groupName);
-        console.log('joinnnnnnnnnnnnnnnnnnnnn: ', data);
         if(groups.indexOf(data.groupName) != -1) {
             socket.join(data.groupName);
             socket.to(data.groupName).emit("notificationJoinRoom", {msg: "Có người đã vào phòng", groupName: data.groupName});
-            // socket.emit('userSet', {username: data}); todo: create emit handler group name
+            socket.emit("notificationJoinRoom", {msg: "Bạn đã vào phòng", groupName: data.groupName});
         } else {
+            console.log('no exits');
             socket.emit('groupNameNoExists', data.groupName + ' no exist! Try some other group name.');
         }
     })
