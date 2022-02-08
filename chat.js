@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
 
     socket.on('msgGroup', function(data) {
         //Send message to group chat
-        console.log('chat in group');
+        console.log('chat in group: ', data);
         io.in(data.groupName).emit('newmsgGroup', data);
     })
 
@@ -51,7 +51,7 @@ io.on('connection', function(socket) {
 
     socket.on('joinGroup', function (data) {
         console.log('group name join: ', data.groupName);
-        console.log('joinnnnnnnnnnnnnnnnnnnnn')
+        console.log('joinnnnnnnnnnnnnnnnnnnnn: ', data);
         if(groups.indexOf(data.groupName) != -1) {
             socket.join(data.groupName);
             socket.to(data.groupName).emit("notificationJoinRoom", {msg: "Có người đã vào phòng", groupName: data.groupName});

@@ -34,7 +34,7 @@
             document.body.innerHTML = `<h1> Name: ${user} </h1>\
             <input type = "text" id = "message">\
              <button type = "button" name = "button" onclick = "sendMessage()">Send</button>\
-             <div id = "message-container"></div>`;
+             <div id = "message-all-container"></div>`;
         }
 
         function createGroup() {
@@ -43,7 +43,7 @@
             document.body.innerHTML = `<h1> Group Name: ${document.getElementById('createGroup').value} </h1>\
              <input type = "text" id = "messageGroup">\
              <button type = "button" name = "button" onclick = "sendMessageInGroup()">Send</button>\
-             <div id = "message-container"></div>`;
+             <div id = "message-group-container"></div>`;
         }
 
         function joinGroup() {
@@ -51,7 +51,7 @@
             document.body.innerHTML = `<h1> Group Name: ${document.getElementById('findGroupName').value} </h1>\
              <input type = "text" id = "messageGroup">\
              <button type = "button" name = "button" onclick = "sendMessageInGroup()">Send</button>\
-             <div id = "message-container"></div>`;
+             <div id = "message-group-container"></div>`;
         }
 
         function chatIndividual() {
@@ -98,15 +98,15 @@
         //nghe event chat all
         socket.on('newmsg', function(data) {
             if(user) {
-                document.getElementById('message-container').innerHTML += '<div><b>' +
+                document.getElementById('message-all-container').innerHTML += '<div><b>' +
                     data.user + '</b>: ' + data.message + '</div>'
             }
         })
 
         //nghe event chat group
         socket.on('newmsgGroup', function(data) {
-            if(user && group) {
-                document.getElementById('message-container').innerHTML += '<div><b>' +
+            if(user) {
+                document.getElementById('message-group-container').innerHTML += '<div><b>' +
                     data.user + '</b>: ' + data.message + '</div>'
             }
         })
@@ -121,7 +121,6 @@
         socket.on('notificationJoinRoom', function(data) {
             group = data.groupName;
             alert(data.msg);
-
         })
     </script>
 
